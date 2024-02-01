@@ -13,13 +13,13 @@ export class authController {
                 })
             }
 
-            if (result && result[0] && result[0].length === 0) {
+            if (!result || !result[0]) {
                 return res.json({
                     success: false,
                     message: "User is not found"
                 });
             }
-            if (result && result[0] && result[0].isChecked == 0) {
+            if (result[0].isChecked == 0) {
                 return res.json({ success: false, message: "User is not verified" });
             }
             let isMatch = await bcrypt.compare(userData.password, result[0].password );
