@@ -12,20 +12,21 @@
         <input
           type="email"
           placeholder="Enter your email"
-          v-model="name"
+          v-model="userData.email"
           class="border-2 shadow-md p-2"
         />
         <input
           type="password"
           placeholder="Enter your password"
-          v-model="password"
-
+          v-model="userData.password"
           class="border-2 shadow-md p-2"
         />
       </div>
 
-      <button class="h-fit w-fit bg-[#4070f4] text-white p-2 m-3"
-      @click="signIn()">
+      <button
+        class="h-fit w-fit bg-[#4070f4] text-white p-2 m-3"
+        @click="signIn()"
+      >
         Sign in
       </button>
       <div class="flex items-center justify-center gap-2">
@@ -36,22 +37,34 @@
   </div>
 </template>
 <script>
-export default{
-  data(){
-    return{
-      name:'',
-      password:'',
-    }
+export default {
+  data() {
+    return {
+      userData: {
+        email: "",
+        password: "",
+      },
+    };
   },
-  methods:{
-    signIn(){
-    if(this.name != '' && this.password != ''){
-      this.$router.push('/');
-    }
-    else{
-      alert('Please enter a name or password'); 
-    }
-  }
+  methods: {
+    signIn() {
+      if (this.userData.name != "" && this.userData.password != "") {
+        this.$http
+          .$post("/auth/login", {
+            body: {
+              ...this.userData,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            if (res.success) {
+              this.$router.push("/");
+            }
+          });
+      } else {
+        alert("Please enter a Email or password");
+      }
+    },
   },
-}
+};
 </script>

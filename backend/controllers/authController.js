@@ -1,38 +1,38 @@
 import conn from '../config/db.js';
 import sqlString from 'sqlstring';
-import bcrypt  from 'bcrypt'; 
+import bcrypt from 'bcrypt';
 export class authController {
-    static async login(req,res){
+    static async login(req, res) {
         let userData = req.body;
-        let query = sqlString.format("SELECT * FROM USER WHERE EMAIL = ?",[userData.email]);
-        conn.query(query, async (err,result)=>{
-            if(err){
+        let query = sqlString.format("SELECT * FROM USER WHERE EMAIL = ?", [userData.email]);
+        conn.query(query, async (err, result) => {
+            if (err) {
                 return res.json({
-                    success:false,
-                    message:"Couldn't connect to the server",
+                    success: false,
+                    message: "Couldn't connect to the server",
                 })
             }
-            
-            if(result[0].length==0){
+
+            if (result && result[0] && result[0].length === 0) {
                 return res.json({
-                    success:false,
-                    message:"User is not found"
+                    success: false,
+                    message: "User is not found"
                 });
             }
-            if(result[0].isChecked == 0){
-                return res.json({success:false, message:"User is not verified"});
+            if (result && result[0] && result[0].isChecked == 0) {
+                return res.json({ success: false, message: "User is not verified" });
             }
-            let isMatch = await bcrypt.compare(userData.password,result[0].password);
-            if(!isMatch) {
+            let isMatch = await bcrypt.compare(userData.password, result[0].password );
+            if (!isMatch) {
                 return res.json({
-                    success:false,
-                    message:"Password is incorrect"
+                    success: false,
+                    message: "Password is incorrect"
                 });
             }
-            else{
+            else {
                 return res.json({
-                    success:true,
-                    message:"User is successfully logged in"
+                    success: true,
+                    message: "User is successfully logged in"
                 })
             }
         });
@@ -56,7 +56,7 @@ export class authController {
                 });
             }
             let salt = await bcrypt.genSalt(10);
-            let hash = await bcrypt.hash(userData.password,salt);
+            let hash = await bcrypt.hash(userData.password, salt);
             userData.password = hash;
             userData.conformPassword = hash;
             let query = sqlString.format('INSERT INTO user SET ?', [userData]);
