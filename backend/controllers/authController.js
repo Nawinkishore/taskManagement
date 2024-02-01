@@ -12,7 +12,7 @@ export class authController {
                     message:"Couldn't connect to the server",
                 })
             }
-            // console.log(result);
+            
             if(result[0].length==0){
                 return res.json({
                     success:false,
