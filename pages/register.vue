@@ -38,10 +38,14 @@
         />
       </div>
       <div class="flex items-center justify-center gap-2 mt-3">
-          <input type="checkbox" v-model="userData.isChecked" class="border-none" />
-          
-          <p class="text-[14px]">I accept all terms & conditions</p>
-        </div>
+        <input
+          type="checkbox"
+          v-model="userData.isChecked"
+          class="border-none"
+        />
+
+        <p class="text-[14px]">I accept all terms & conditions</p>
+      </div>
       <div
         v-if="emailExists"
         class="fixed top-0 transition text-red-600 shadow-sm h-fit w-fit bg-white p-2 rounded-md"
@@ -72,12 +76,11 @@ export default {
         email: "",
         password: "",
         conformPassword: "",
-         isChecked: false,
+        isChecked: false,
       },
     };
   },
   methods: {
-    // this.userData.isChecked != false
     store() {
       if (
         this.userData.name != "" &&
