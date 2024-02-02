@@ -56,7 +56,7 @@ export default {
             },
           })
           .then((res) => {
-            console.log(res);
+            console.log("Response from API:", res.result[0].name);
             if (res.success) {
               this.$router.push("/");
             }
