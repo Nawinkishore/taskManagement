@@ -1,6 +1,7 @@
 import conn from '../config/db.js';
 import sqlString from 'sqlstring';
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 export class authController {
     static async login(req, res) {
         let userData = req.body;
@@ -22,7 +23,7 @@ export class authController {
             if (result[0].isChecked == 0) {
                 return res.json({ success: false, message: "User is not verified" });
             }
-            let isMatch = await bcrypt.compare(userData.password, result[0].password );
+            let isMatch = await bcrypt.compare(userData.password, result[0].password);
             if (!isMatch) {
                 return res.json({
                     success: false,
@@ -32,14 +33,19 @@ export class authController {
             else {
                 return res.json({
                     success: true,
-                    message: "User is successfully logged in"
+                    message: "User is successfully logged in",
+                    result,
                 })
             }
         });
     }
     static async register(req, res) {
         let userData = req.body;
-
+        let insertObj ={
+            userId:uuidv4(),
+            
+        }
+        userData = {...userData, ...insertObj};
         let query = sqlString.format(`SELECT COUNT(*) as userCount FROM USER WHERE EMAIL = ?`, [userData.email]);
         conn.query(query, async (err, result) => {
             if (err) {
@@ -55,10 +61,15 @@ export class authController {
                     message: "Email is already in use",
                 });
             }
+
             let salt = await bcrypt.genSalt(10);
             let hash = await bcrypt.hash(userData.password, salt);
+
+        
             userData.password = hash;
+
             userData.conformPassword = hash;
+            // console.log(userData);
             let query = sqlString.format('INSERT INTO user SET ?', [userData]);
 
             conn.query(query, (err, result) => {
@@ -73,5 +84,22 @@ export class authController {
             });
         });
 
+    }
+    static async  getDetails (req, res){
+        const { id } = req.params;
+        let query =  sqlString.format(`SELECT  * FROM USER WHERE USERID =? `,[id] )
+        conn.query(query,(err,result) => {
+            if(err){
+                return res.json({
+                    success: false,
+                    message: err.message,
+                })
+            }
+            return res.json({
+                success: true,
+                message:"user successfully found",
+                result,
+            })
+        });
     }
 }
