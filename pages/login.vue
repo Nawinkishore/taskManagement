@@ -23,12 +23,14 @@
         />
       </div>
 
-      <button
-        class="h-fit w-fit bg-[#4070f4] text-white p-2 m-3"
-        @click="signIn()"
-      >
-        Sign in
-      </button>
+     
+        <button
+          class="h-fit w-fit bg-[#4070f4] text-white p-2 m-3"
+          @click="signIn()"
+        >
+          Sign in
+        </button>
+      
       <div class="flex items-center justify-center gap-2">
         <p>Register?</p>
         <NuxtLink to="/register" class="text-blue-500"><p>signUp</p></NuxtLink>
@@ -44,6 +46,7 @@ export default {
         email: "",
         password: "",
       },
+      
     };
   },
   methods: {
@@ -56,9 +59,11 @@ export default {
             },
           })
           .then((res) => {
-            console.log("Response from API:", res.result[0].name);
+            console.log("Response from API:", res.result[0].userId);
+
             if (res.success) {
-              this.$router.push("/");
+              this.$router.push(`${res.result[0].userId}`);
+              
             }
           });
       } else {
